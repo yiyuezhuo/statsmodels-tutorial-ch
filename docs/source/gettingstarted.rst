@@ -7,6 +7,15 @@ estimate a statistical model and to draw a diagnostic plot. We will only use
 functions provided by ``statsmodels`` or its ``pandas`` and ``patsy``
 dependencies.
 
+开始
+===============
+
+这个非常简单的案例研究是设计让你可以在实践中快速上手 ``statsmodels``。 从原始数据开始
+我们将战史估计一个统计模型与画诊断图所需要的步骤。我们将仅适用 ``statsmodels`` 提供的
+函数或者它依赖的 ``pandas`` 与 ``patsy`` 项。
+
+
+
 Loading modules and functions
 -----------------------------
 
@@ -18,6 +27,18 @@ few modules and functions:
     import statsmodels.api as sm
     import pandas
     from patsy import dmatrices
+    
+载入模块与函数
+-----------------------------
+
+在 `安装statsmodels与它的依赖项 <install.html>`_  后, 我们载入一些其中的模块与函数:
+
+.. ipython:: python
+
+    import statsmodels.api as sm
+    import pandas
+    from patsy import dmatrices
+
 
 `pandas <http://pandas.pydata.org/>`_ builds on ``numpy`` arrays to provide
 rich data structures and data analysis tools. The ``pandas.DataFrame`` function
@@ -28,6 +49,20 @@ comma-separated values file to a ``DataFrame`` object.
 `patsy <https://github.com/pydata/patsy>`_ is a Python library for describing
 statistical models and building `Design Matrices
 <http://en.wikipedia.org/wiki/Design_matrix>`_ using ``R``-like formulas.
+
+`pandas <http://pandas.pydata.org/>`_ 是建立在 ``numpy`` 数组之上的， 提供富数据结构
+与数据处理工具. The ``pandas.DataFrame`` 函数提供数据的标记数组（可能是异质heterogenous的）
+类似 ``R`` "data.frame"。 ``pandas.read_csv`` 函数可以被用来转换一个逗号分隔值文件
+到 ``DataFrame`` 对象。
+
+`patsy <https://github.com/pydata/patsy>`_ is a Python library for describing
+statistical models and building `Design Matrices
+<http://en.wikipedia.org/wiki/Design_matrix>`_ using ``R``-like formulas.
+
+`patsy <https://github.com/pydata/patsy>`_ 是一个Python库，其以类似R公式的语法描述
+统计模型并且以此构造`设计矩阵 <http://en.wikipedia.org/wiki/Design_matrix>`_ .
+
+
 
 Data
 ----
@@ -40,6 +75,15 @@ comma-separated values format (CSV) by the `Rdatasets
 <http://vincentarelbundock.github.com/Rdatasets/>`_ repository.
 We could download the file locally and then load it using ``read_csv``, but
 ``pandas`` takes care of all of this automatically for us:
+
+数据
+----
+
+我们下载 `Guerry dataset <http://vincentarelbundock.github.com/Rdatasets/doc/HistData/Guerry.html>`_, 一个
+历史数据集，是Andre-Michel Guerry 1833年的 *Essay on the Moral Statistics of France*。
+数据集以逗号分隔值格式（CSV）存在 `Rdatasets <http://vincentarelbundock.github.com/Rdatasets/>`_ 仓库.
+我们可以下载这个文件到本地并且加载它使用 ``read_csv``，而 ``pandas`` 将一切都自动帮我们做好了
+
 
 .. ipython:: python
 
