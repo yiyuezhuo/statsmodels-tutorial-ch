@@ -1,13 +1,5 @@
-Getting started
-===============
 
-This very simple case-study is designed to get you up-and-running quickly with
-``statsmodels``. Starting from raw data, we will show the steps needed to
-estimate a statistical model and to draw a diagnostic plot. We will only use
-functions provided by ``statsmodels`` or its ``pandas`` and ``patsy``
-dependencies.
-
-开始
+入门
 ===============
 
 这个非常简单的案例研究是设计让你可以在实践中快速上手 ``statsmodels``。 从原始数据开始
@@ -15,18 +7,6 @@ dependencies.
 函数或者它依赖的 ``pandas`` 与 ``patsy`` 项。
 
 
-
-Loading modules and functions
------------------------------
-
-After `installing statsmodels and its dependencies <install.html>`_, we load a
-few modules and functions:
-
-.. ipython:: python
-
-    import statsmodels.api as sm
-    import pandas
-    from patsy import dmatrices
     
 载入模块与函数
 -----------------------------
@@ -40,41 +20,14 @@ few modules and functions:
     from patsy import dmatrices
 
 
-`pandas <http://pandas.pydata.org/>`_ builds on ``numpy`` arrays to provide
-rich data structures and data analysis tools. The ``pandas.DataFrame`` function
-provides labelled arrays of (potentially heterogenous) data, similar to the
-``R`` "data.frame". The ``pandas.read_csv`` function can be used to convert a
-comma-separated values file to a ``DataFrame`` object.
-
-`patsy <https://github.com/pydata/patsy>`_ is a Python library for describing
-statistical models and building `Design Matrices
-<http://en.wikipedia.org/wiki/Design_matrix>`_ using ``R``-like formulas.
-
 `pandas <http://pandas.pydata.org/>`_ 是建立在 ``numpy`` 数组之上的， 提供富数据结构
 与数据处理工具. The ``pandas.DataFrame`` 函数提供数据的标记数组（可能是异质heterogenous的）
 类似 ``R`` "data.frame"。 ``pandas.read_csv`` 函数可以被用来转换一个逗号分隔值文件
 到 ``DataFrame`` 对象。
 
-`patsy <https://github.com/pydata/patsy>`_ is a Python library for describing
-statistical models and building `Design Matrices
-<http://en.wikipedia.org/wiki/Design_matrix>`_ using ``R``-like formulas.
-
 `patsy <https://github.com/pydata/patsy>`_ 是一个Python库，其以类似R公式的语法描述
-统计模型并且以此构造`设计矩阵 <http://en.wikipedia.org/wiki/Design_matrix>`_ .
+统计模型并且以此构造 `设计矩阵 <http://en.wikipedia.org/wiki/Design_matrix>`_ .
 
-
-
-Data
-----
-
-We download the `Guerry dataset
-<http://vincentarelbundock.github.com/Rdatasets/doc/HistData/Guerry.html>`_, a
-collection of historical data used in support of Andre-Michel Guerry's 1833
-*Essay on the Moral Statistics of France*. The data set is hosted online in
-comma-separated values format (CSV) by the `Rdatasets
-<http://vincentarelbundock.github.com/Rdatasets/>`_ repository.
-We could download the file locally and then load it using ``read_csv``, but
-``pandas`` takes care of all of this automatically for us:
 
 数据
 ----
@@ -89,10 +42,10 @@ We could download the file locally and then load it using ``read_csv``, but
 
     df = sm.datasets.get_rdataset("Guerry", "HistData").data
 
-The `Input/Output doc page <iolib.html>`_ shows how to import from various
-other formats.
+`导入/导出doc page <iolib.html>`_ 显示了如何载入其他数据格式。
 
-We select the variables of interest and look at the bottom 5 rows:
+我们选择感兴趣的变量并且选择底下5行：
+
 
 .. ipython:: python
 
@@ -100,78 +53,76 @@ We select the variables of interest and look at the bottom 5 rows:
     df = df[vars]
     df[-5:]
 
-Notice that there is one missing observation in the *Region* column. We
-eliminate it using a ``DataFrame`` method provided by ``pandas``:
+注意这里有一个缺失值在 *Region* (区域)列。我们删除它通过 ``pandas`` 的
+``DataFrame`` 方法。 
+
 
 .. ipython:: python
 
     df = df.dropna()
     df[-5:]
 
-Substantive motivation and model
+
+建模目标
 --------------------------------
 
-We want to know whether literacy rates in the 86 French departments are
-associated with per capita wagers on the Royal Lottery in the 1820s. We need to
-control for the level of wealth in each department, and we also want to include
-a series of dummy variables on the right-hand side of our regression equation to
-control for unobserved heterogeneity due to regional effects. The model is
-estimated using ordinary least squares regression (OLS).
+我们想要知道1820年时，法国86个部门中的识字率是否与其在皇家彩票（Royal Lottery）上的人均
+赌注（per capita wagers）量相关。我们需要控制每个部门的财富水平，我们也想要包含一系列
+dummy变量于回归方程的右边以控制没观测到的区域影响异质性。模型以最小二乘（OLS）进行估计。
 
 
-Design matrices (*endog* & *exog*)
+设计矩阵 (*endog* & *exog*)
 ----------------------------------
 
-To fit most of the models covered by ``statsmodels``, you will need to create
-two design matrices. The first is a matrix of endogenous variable(s) (i.e.
-dependent, response, regressand, etc.). The second is a matrix of exogenous
-variable(s) (i.e. independent, predictor, regressor, etc.). The OLS coefficient
-estimates are calculated as usual:
+为了拟合 ``statsmodels`` 中大多数模型，你需要创建两个设计矩阵。第一个是一个内生变量矩阵
+（例如，因变量dependent，响应response，从属变量regressand等）。第二个是外生变量。（例
+如，因变量independent，预测子predictor，回归子regressor等）。OLS系数像通常那样进行计算。
+
 
 .. math::
 
     \hat{\beta} = (X'X)^{-1} X'y
 
-where :math:`y` is an :math:`N \times 1` column of data on lottery wagers per
-capita (*Lottery*). :math:`X` is :math:`N \times 7` with an intercept, the
-*Literacy* and *Wealth* variables, and 4 region binary variables.
+:math:`y` 是 :math:`N \times 1` 数据中的人均赌注(*Lottery*)变量。 :math:`X` 是 :math:`N \time7`
+矩阵，其中7由 *Literacy* , *Wealth* 四个地域二分变量与截距构成。
 
-The ``patsy`` module provides a convenient function to prepare design matrices
-using ``R``-like formulas. You can find more information here:
-http://patsy.readthedocs.org
 
-We use ``patsy``'s ``dmatrices`` function to create design matrices:
+``patsy`` 模块提供了方便的函数来生成设计矩阵通过使用 ``R`` 风格的公式。
+你可以在这里找到更多的信息： http://patsy.readthedocs.org
+
+我们使用 ``patsy`` 的 ``dmatrices`` 函数创建设计矩阵。
+
 
 .. ipython:: python
 
     y, X = dmatrices('Lottery ~ Literacy + Wealth + Region', data=df, return_type='dataframe')
 
-The resulting matrices/data frames look like this:
+矩阵，数据frame看上去像这样：
 
 .. ipython:: python
 
     y[:3]
     X[:3]
 
-Notice that ``dmatrices`` has
 
-* split the categorical *Region* variable into a set of indicator variables.
-* added a constant to the exogenous regressors matrix.
-* returned ``pandas`` DataFrames instead of simple numpy arrays. This is useful because DataFrames allow ``statsmodels`` to carry-over meta-data (e.g. variable names) when reporting results.
+注意 ``dmatrices`` 会
 
-The above behavior can of course be altered. See the `patsy doc pages
+* 分解分类变量 *Region* 为一组指示变量。
+* 为外生变量矩阵增加了一个常数列
+* 不是直接返回一个numpy数组而是反悔了 ``pandas`` DataFrames 数据结构。这是有用的因为DataFrames 使得 ``statsmodels`` 可以携带元数据（比如变量名称），当报道结果时。
+
+上面的行为当然可以调整. 参见 `patsy doc pages
 <http://patsy.readthedocs.org/>`_.
 
-Model fit and summary
+
+模型拟合与汇报
 ---------------------
 
-Fitting a model in ``statsmodels`` typically involves 3 easy steps:
+在 ``statsmodels`` 中拟合模型通常由3个简单步骤组成：
 
-1. Use the model class to describe the model
-2. Fit the model using a class method
-3. Inspect the results using a summary method
-
-For OLS, this is achieved by:
+1. 使用模型来描述模型
+2. 拟合模型通过使用模型方法
+3. 检视结果通过使用summary方法
 
 .. ipython:: python
 
@@ -180,8 +131,7 @@ For OLS, this is achieved by:
     print res.summary()   # Summarize model
 
 
-The ``res`` object has many useful attributes. For example, we can extract
-parameter estimates and r-squared by typing:
+``res`` 对象有很多有用的属性。作为例子，我们可以提取参数估计值以及r方通过输入：
 
 
 .. ipython:: python
@@ -189,30 +139,27 @@ parameter estimates and r-squared by typing:
     res.params
     res.rsquared
 
-Type ``dir(res)`` for a full list of attributes.
 
-For more information and examples, see the `Regression doc page <regression.html>`_
+输入 ``dir(res)`` 来获得属性的完整列表。
 
-Diagnostics and specification tests
+为了更多信息与例子，参见 ``回归的文档页面 <regression.html>``_
+
+
+诊断与规范检验
 -----------------------------------
 
-``statsmodels`` allows you to conduct a range of useful `regression diagnostics
-and specification tests
-<stats.html#residual-diagnostics-and-specification-tests>`_.  For instance,
-apply the Rainbow test for linearity (the null hypothesis is that the
-relationship is properly modelled as linear):
+``statsmodels`` 允许你执行一系列有用的 `回归诊断与规范检验 <stats.html#residual-diagnostics-and-specification-tests>`_.
+作为例子，应用Rainbow检验进行线性检验（空假设为变量关系的确是线性的）:
 
 .. ipython:: python
 
     sm.stats.linear_rainbow(res)
 
-Admittedly, the output produced above is not very verbose, but we know from
-reading the `docstring <generated/statsmodels.stats.diagnostic.linear_rainbow.html>`_
-(also, ``print sm.stats.linear_rainbow.__doc__``) that the
-first number is an F-statistic and that the second is the p-value.
 
-``statsmodels`` also provides graphics functions. For example, we can draw a
-plot of partial regression for a set of regressors by:
+的确，输出结果的所指不是非常明显，但是我们可以从 `文档字符串 <generated/statsmodels.stats.diagnostic.linear_rainbow.html>`_
+中得知第一个数是F-统计量，第二个是p值。（也可以使用 ``print sm.stats.linear_rainbow.__doc__``）
+
+``statsmodels`` 也提供图形函数，作为例子，我们可以画一个偏回归的图形为一组回归子通过：
 
 .. ipython:: python
 
@@ -220,8 +167,8 @@ plot of partial regression for a set of regressors by:
     sm.graphics.plot_partregress('Lottery', 'Wealth', ['Region', 'Literacy'],
                                  data=df, obs_labels=False)
 
-More
+进一步
 ----
 
-Congratulations! You're ready to move on to other topics in the
-`Table of Contents <index.html#table-of-contents>`_
+
+恭喜，你已经可以前往更高级的主题，它们在 `Table of Contents <index.html#table-of-contents>`_
