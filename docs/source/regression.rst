@@ -3,34 +3,32 @@
 
 .. _regression:
 
-Linear Regression
+线性回归
 =================
 
-Linear models with independently and identically distributed errors, and for
-errors with heteroscedasticity or autocorrelation. This module allows
-estimation by ordinary least squares (OLS), weighted least squares (WLS),
-generalized least squares (GLS), and feasible generalized least squares with
-autocorrelated AR(p) errors.
 
-See `Module Reference`_ for commands and arguments.
+线性模型建模独立同分布的误差分布，也可以剞劂异方差或者自相关的情况。这个模块可以
+使用最小二乘法（OLS），加权最小二乘（WLS），广义最小二乘（GLS）进行估计，并且
+可用光以最小二乘处理自相关AR(p)误差。
 
-Examples
+例子
 --------
 
 ::
 
-    # Load modules and data
+    # 载入模块和数据
     import numpy as np
     import statsmodels.api as sm
     spector_data = sm.datasets.spector.load()
     spector_data.exog = sm.add_constant(spector_data.exog, prepend=False)
 
-    # Fit and summarize OLS model
+    # 汇报拟合OLS模型结果
     mod = sm.OLS(spector_data.endog, spector_data.exog)
     res = mod.fit()
     print res.summary()
 
-Detailed examples can be found here:
+
+更细致的例子像这样：
 
 .. toctree::
    :maxdepth: 1
@@ -39,26 +37,25 @@ Detailed examples can be found here:
    examples/notebooks/generated/wls
    examples/notebooks/generated/gls
 
-Technical Documentation
+技术文档
 -----------------------
 
-The statistical model is assumed to be
+统计模型被假设为
 
- :math:`Y = X\beta + \mu`,  where :math:`\mu\sim N\left(0,\Sigma\right).`
+:math:`Y = X\beta + \mu`, 其中 :math:`\mu\sim N\left(0,\Sigma\right).`
 
-Depending on the properties of :math:`\Sigma`, we have currently four classes available:
+决定于 :math:`\Sigma` 的设定, 我们现在有四个可用类
 
-* GLS : generalized least squares for arbitrary covariance :math:`\Sigma`
-* OLS : ordinary least squares for i.i.d. errors :math:`\Sigma=\textbf{I}`
-* WLS : weighted least squares for heteroskedastic errors :math:`\text{diag}\left  (\Sigma\right)`
-* GLSAR : feasible generalized least squares with autocorrelated AR(p) errors
-  :math:`\Sigma=\Sigma\left(\rho\right)`
+* GLS : 广义最小二乘，对于任意协方差结构 :math:`\Sigma`
+* OLS : 最小二乘法对于i.i.d残差 :math:`\Sigma=\textvf{I}`
+* WLS : 加权最小二乘对于异方差误差结构 :math:`\text{diag}\left (\Sigma\right)`
+* GLSAR : 可用广义最小二乘对于自回归AR(p)误差 :math:`\Sigma=\Sigma\left(\rho\right)`
 
-All regression models define the same methods and follow the same structure,
-and can be used in a similar fashion. Some of them contain additional model
-specific methods and attributes.
 
-GLS is the superclass of the other regression classes.
+所有回归模型定义了类似的方法并且遵循类似的结构，以类似的方式使用。它们中的一些
+具有一些模型所特有的方法和属性。
+
+GLS 是其他回归类的超类。
 
 .. Class hierachy: TODO
 
@@ -72,14 +69,16 @@ GLS is the superclass of the other regression classes.
 .. case the parameter estimates of the lag estimates are not reported, however
 .. additional statistics, for example aic, become available.
 
-References
+
+
+参考文献
 ^^^^^^^^^^
 
-General reference for regression models:
+关于回归模型的提要:
 
 * D.C. Montgomery and E.A. Peck. "Introduction to Linear Regression Analysis." 2nd. Ed., Wiley, 1992.
 
-Econometrics references for regression models:
+回归模型在计量经济学上的应用的提要:
 
 * R.Davidson and J.G. MacKinnon. "Econometric Theory and Methods," Oxford, 2004.
 * W.Green.  "Econometric Analysis," 5th ed., Pearson, 2003.
@@ -89,46 +88,43 @@ Econometrics references for regression models:
 ..
 ..   regression_techn1
 
-Attributes
+属性
 ^^^^^^^^^^
 
-The following is more verbose description of the attributes which is mostly
-common to all regression classes
+
+下面是对模型类的通用属性进行的详细描述
 
 pinv_wexog : array
-    The `p` x `n` Moore-Penrose pseudoinverse of the whitened design matrix.
-    It is approximately equal to
-    :math:`\left(X^{T}\Sigma^{-1}X\right)^{-1}X^{T}\Psi`, where
-    :math:`\Psi` is defined such that :math:`\Psi\Psi^{T}=\Sigma^{-1}`.
+    `p` x `n` 白化设计矩阵的Moore-Penrose 伪逆.
+    它近似等于
+    :math:`\left(X^{T}\Sigma^{-1}X\right)^{-1}X^{T}\Psi`, 其中
+    :math:`\Psi` 被定义为 :math:`\Psi\Psi^{T}=\Sigma^{-1}`.
 cholsimgainv : array
-    The `n` x `n` upper triangular matrix :math:`\Psi^{T}` that satisfies
+    `n` x `n` 上三角矩阵 :math:`\Psi^{T}` 其满足
     :math:`\Psi\Psi^{T}=\Sigma^{-1}`.
 df_model : float
-    The model degrees of freedom. This is equal to `p` - 1, where `p` is the
-    number of regressors. Note that the intercept is not counted as using a
-    degree of freedom here.
+    模型自由度，它等于 `p` -1,其中 `p` 是回归子数量。注意这是因为截距不算进去导致的-1.
 df_resid : float
-    The residual degrees of freedom. This is equal `n - p` where `n` is the
-    number of observations and `p` is the number of parameters. Note that the
-    intercept is counted as using a degree of freedom here.
+    剩余自由度。这等于 `n - p` ，其中 `n` 是观测数而 `p` 是参数个数。注意截距
+    在这里是被算进减去的自由度里的。
 llf : float
-    The value of the likelihood function of the fitted model.
+    拟合模型的似然函数值
 nobs : float
-    The number of observations `n`
+    观测值 `n` 的数值。
 normalized_cov_params : array
-    A `p` x `p` array equal to :math:`(X^{T}\Sigma^{-1}X)^{-1}`.
+    一个 `p` x `p` 数组，其等于 :math:`(X^{T}\Sigma^{-1}X)^{-1}`.
 sigma : array
-    The `n` x `n` covariance matrix of the error terms:
+    误差项的协方差矩阵:
     :math:`\mu\sim N\left(0,\Sigma\right)`.
 wexog : array
-    The whitened design matrix :math:`\Psi^{T}X`.
+    白化设计矩阵 :math:`\Psi^{T}X`.
 wendog : array
-    The whitened response variable :math:`\Psi^{T}Y`.
+    白化响应变量 :math:`\Psi^{T}Y`.
 
-Module Reference
+模块引用
 ----------------
 
-Model Classes
+模型类
 ^^^^^^^^^^^^^
 
 .. autosummary::
@@ -147,12 +143,11 @@ Model Classes
 
    QuantReg
 
-Results Classes
+结果类
 ^^^^^^^^^^^^^^^
 
-Fitting a linear regression model returns a results class. OLS has a
-specific results class with some additional methods compared to the
-results class of the other linear models.
+拟合一个线性回归模型会返回一个结果类。OLS有一个特别的结果类，其包含一些
+额外的方法来比较其他模型类的拟合结果。
 
 .. currentmodule:: statsmodels.regression.linear_model
 
