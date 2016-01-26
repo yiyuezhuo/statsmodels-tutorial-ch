@@ -1,12 +1,10 @@
 .. _endog_exog:
 
-``endog``, ``exog``, what's that?
-=================================
 
-Statsmodels is using ``endog`` and ``exog`` as names for the data, the
-observed variables that are used in an estimation problem. Other names that
-are often used in different statistical packages or text books are, for
-example,
+``endog``, ``exog``, 是什么?
+=================================
+statsmodels使用 ``endog`` 与 ``exog`` （内生变量，外生变量，下面这对词一律不翻译
+）作为观测的变量在估计中的名字。其他的统计包或书籍可能使用其他的名称，如:
 
 ===================== ======================
 endog                 exog
@@ -20,67 +18,56 @@ outcome               design
 response variable     explanatory variable
 ===================== ======================
 
-The usage is quite often domain and model specific; however, we have chosen
-to use `endog` and `exog` almost exclusively. A mnenomic hint to keep the two
-terms apart is that exogenous has an "x", as in x-variable, in it's name.
 
-`x` and `y` are one letter names that are sometimes used for temporary
-variables and are not informative in itself. To avoid one letter names we
-decided to use descriptive names and settled on ``endog`` and ``exog``.
-Since this has been criticized, this might change in future.
+不同的领域的模型往往使用不同的名称，无论如何，我们基本上只使用 `endog` 与 `exog` 。
+一个区分它们两个的记忆技巧是exogenous中含有一个x，其处于x变量的地位，正如其名。
 
-Background
+`x` 与 `y` 是子目名称，它们有时被用于临时变量而且也不能提示使用它们的相关信息。
+为了避免字母名称，我们决定使用描述性名称并且指定为 ``endog`` 与 ``exog`` 。
+这一点虽然被有所质疑，但是也许未来会改观。
+
+背景知识
 ----------
 
-Some informal definitions of the terms are
 
-`endogenous`: caused by factors within the system
+它们的非正式定义可以这样表述:
 
-`exogenous`: caused by factors outside the system
+`endogenous`: （内生变量）系统内部决定的因素
 
-*Endogenous variables designates variables in an economic/econometric model
-that are explained, or predicted, by that model.*
+`exogenous`: （外生变量）系统外决定的因素
+
+*Endogenous 变量意味着（designates）变量是被经济学/计量经济学模型所解释，预测的*
 http://stats.oecd.org/glossary/detail.asp?ID=794
 
-*Exogenous variables designates variables that appear in an
-economic/econometric model, but are not explained by that model (i.e. they are
-taken as given by the model).*  http://stats.oecd.org/glossary/detail.asp?ID=890
-
-In econometrics and statistics the terms are defined more formally, and
-different definitions of exogeneity (weak, strong, strict) are used depending
-on the model. The usage in statsmodels as variable names cannot always be
-interpreted in a formal sense, but tries to follow the same principle.
+*Exigenous 变量意味着变量在经济学/计量经济学模型中出现，但是没有被这个模型解释(它们被模型给定)*
+http://stats.oecd.org/glossary/detail.asp?ID=890
 
 
-In the simplest form, a model relates an observed variable, y, to another set
-of variables, x, in some linear or nonlinear form ::
+在计量经济学和统计学中，术语的定义更正式，不同的exogeneity(weak,strong,strict)定义
+以模型如何使用所决定。而statsmodels的变量用法通常不能总是以形式的意义得到解释，
+但是它总是试图符合这些原理。
+
+在最简单的形式中，模型将被观测的变量y与另一个被观测变量集合x以线性或非线性形式连接在一起
 
    y = f(x, beta) + noise
    y = x * beta + noise
 
-However, to have a statistical model we need additional assumptions on the
-properties of the explanatory variables, x, and the noise. One standard
-assumption for many basic models is that x is not correlated with the noise.
-In a more general definition, x being exogenous means that we do not have to
-consider how the explanatory variables in x were generated, whether by design
-or by random draws from some underlying distribution, when we want to estimate
-the effect or impact that x has on y, or test a hypothesis about this effect.
 
-In other words, y is *endogenous* to our model, x is *exogenous* to our model
-for the estimation.
+无论如何，为了建立一个统计模型，我们需要关于解释变量x以及噪声的额外假设。一个
+标准假设对于这些简单的模型是x与噪声不想管，再更广义的定义中，x作为exogenous意味着
+我们没有考虑x这些解释变量是如何生成的，是实验设计出的还是从背后总体随机抽取出的，
+当我们想要顾及x对y的效应时，或者检验这个效应的假设时。
 
-As an example, suppose you run an experiment and for the second session some
-subjects are not available anymore.
-Is the drop-out relevant for the conclusions you draw for the experiment?
-In other words, can we treat the drop-out decision as exogenous for our
-problem.
+换句话说,y是 *endogenous* 对于我们的模型，x是 *exogenous* 对于我们所估计的模型。
 
-It is up to the user to know (or to consult a text book to find out) what the
-underlying statistical assumptions for the models are. As an example, ``exog``
-in ``OLS`` can have lagged dependent variables if the error or noise term is
-independently distributed over time (or uncorrelated over time). However, if
-the error terms are autocorrelated, then OLS does not have good statistical
-properties (is inconsistent) and the correct model will be ARMAX.
-``statsmodels`` has functions for regression diagnostics to test whether some of
-the assumptions are justified or not.
+
+作为例子，假设你run一个实验，第二期一些被试没有被继续追朔。那么这个缺失是否影响你实验？
+
+这将有助益，如果用户了解（或者从其能从教科书上参考的）统计模型背后所具有的假设。作为一个例子，
+``exog`` 在 ``OLS`` 中可以有滞后因变量，如果误差项与噪声项在时间上(over time)分布独立（不相关）。无论如何，
+如果误差项是自相关的，则OLS将失去其良好的统计属性（变得不一致）而应当选择的模型是ARMAX。
+``statsmodels`` 提供了用于回归诊断的函数来检验是否一些假设是正确的。
+结论？换句话说，我们能对待中途退出选择作为一个我们问题中的exogenous。
+
+
 
