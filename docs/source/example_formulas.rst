@@ -1,17 +1,5 @@
 .. _formula_examples:
 
-Fitting models using R-style formulas
-=====================================
-
-Since version 0.5.0, ``statsmodels`` allows users to fit statistical
-models using R-style formulas. Internally, ``statsmodels`` uses the
-`patsy <http://patsy.readthedocs.org/>`_ package to convert formulas and
-data to the matrices that are used in model fitting. The formula
-framework is quite powerful; this tutorial only scratches the surface. A
-full description of the formula language can be found in the ``patsy``
-docs:
-
--  `Patsy formula language description <http://patsy.readthedocs.org/>`_
 
 使用R风格模式拟合模型
 =====================================
@@ -24,7 +12,7 @@ docs:
 -  `Patsy formula language description <http://patsy.readthedocs.org/>`_
 
 
-Loading modules and functions 
+模块与函数的导入
 -----------------------------
 
 .. code:: python
@@ -33,19 +21,6 @@ Loading modules and functions
     import numpy as np
     import pandas
 
-Notice that we called ``statsmodels.formula.api`` instead of the usual
-``statsmodels.api``. The ``formula.api`` hosts many of the same
-functions found in ``api`` (e.g. OLS, GLM), but it also holds lower case
-counterparts for most of these models. In general, lower case models
-accept ``formula`` and ``df`` arguments, whereas upper case ones take
-``endog`` and ``exog`` design matrices. ``formula`` accepts a string
-which describes the model in terms of a ``patsy`` formula. ``df`` takes
-a `pandas <http://pandas.pydata.org/>`_ data frame.
-
-``dir(smf)`` will print a list of available models.
-
-Formula-compatible models have the following generic call signature:
-``(formula, data, subset=None, *args, **kwargs)``
 
 注意我们导入的是 ``statsmodels.formula.api`` 而不是通常的 ``statsmodels.api``
 ``formula.api`` 放了很多类似 ``api`` 里的函数（如OLS,GLM），但是它还放了对等的其小写
@@ -59,12 +34,6 @@ Formula-compatible models have the following generic call signature:
 
 ``(formula, data, subset=None, *args, **kwargs)``
 
-OLS regression using formulas
------------------------------
-
-To begin, we fit the linear model described on the `Getting
-Started <gettingstarted.html>`_ page. Download the data, subset columns,
-and list-wise delete to remove missing observations:
 
 使用公式进行OLS回归
 -----------------------------
@@ -87,7 +56,6 @@ and list-wise delete to remove missing observations:
     3       80        46      76      E
     4       79        69      83      E
 
-Fit the model:
 
 拟合模型：
 
@@ -127,17 +95,6 @@ Fit the model:
     ==============================================================================
 
 
-Categorical variables
----------------------
-
-Looking at the summary printed above, notice that ``patsy`` determined
-that elements of *Region* were text strings, so it treated *Region* as a
-categorical variable. ``patsy``'s default is also to include an
-intercept, so we automatically dropped one of the *Region* categories.
-
-If *Region* had been an integer variable that we wanted to treat
-explicitly as categorical, we could have done so by using the ``C()``
-operator:
 
 分类变量
 ---------------------
@@ -165,30 +122,16 @@ operator:
     Wealth             0.451475
 
 
-Examples more advanced features ``patsy``'s categorical variables
-function can be found here: `Patsy: Contrast Coding Systems for
-categorical variables <contrasts.html>`_
 
 ``patsy`` 的分类变量的更高级的使用例子可以在这里找到 `Patsy: Contrast Coding Systems for
 categorical variables <contrasts.html>`_
 
-Operators
----------
-
-We have already seen that "~" separates the left-hand side of the model
-from the right-hand side, and that "+" adds new columns to the design
-matrix.
 
 操作符
 ---------
 
 我们已经看到 "~" 分割了模型的左边与右边，以及 "+" 增加了新的列到设计矩阵中。
 
-Removing variables
-~~~~~~~~~~~~~~~~~~
-
-The "-" sign can be used to remove columns/variables. For instance, we
-can remove the intercept from a model by:
 
 移除变量
 ~~~~~~~~~~~~~~~~~~
@@ -211,16 +154,14 @@ can remove the intercept from a model by:
     Wealth           0.451475
 
 
-Multiplicative interactions
+
+乘法交互项
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Multiplicative interactions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-":" adds a new column to the design matrix with the product of the other
-two columns. "\*" will also include the individual columns that were
-multiplied together:
+":" 操作符可以增加一个列到设计矩阵中，该列有另两个列的乘积组成。"\*" 操
+作符则会包含三个列，分别由两边的单独列与乘积列组成。
 
 .. code:: python
 
@@ -238,14 +179,14 @@ multiplied together:
     Literacy:Wealth   -0.013609
 
 
-Many other things are possible with operators. Please consult the `patsy
-docs <https://patsy.readthedocs.org/en/latest/formulas.html>`_ to learn
-more.
 
-Functions
+关于操作符更得内容请参考 `patsy docs <https://patsy.readthedocs.org/en/latest/formulas.html>`_ 。
+
+
+函数
 ---------
 
-You can apply vectorized functions to the variables in your model:
+你可以作用向量化函数到你的模型中
 
 .. code:: python
 
@@ -258,7 +199,8 @@ You can apply vectorized functions to the variables in your model:
     np.log(Literacy)    -20.393959
 
 
-Define a custom function:
+
+这样定义一个新的函数:
 
 .. code:: python
 
@@ -275,20 +217,24 @@ Define a custom function:
 
 .. _patsy-namespaces:
 
-Namespaces
+
+命令空间
 ----------
 
-Notice that all of the above examples use the calling namespace to look for the functions to apply. The namespace used can be controlled via the ``eval_env`` keyword. For example, you may want to give a custom namespace using the :class:`patsy:patsy.EvalEnvironment` or you may want to use a "clean" namespace, which we provide by passing ``eval_func=-1``. The default is to use the caller's namespace. This can have (un)expected consequences, if, for example, someone has a variable names ``C`` in the user namespace or in their data structure passed to ``patsy``, and ``C`` is used in the formula to handle a categorical variable. See the `Patsy API Reference <http://patsy.readthedocs.org/en/latest/API-reference.html>`_ for more information.
+注意上面所有例子使用的都是调用者命令控件来寻找所要调用的函数。命名空间可以使用关键字 ``eval_env`` 空间。
+作为例子，你可能会想要一个自定义的命名空间通过使用类 :class:`patsy:patsy.EvalEnvironment` 或者你想要
+使用"清洁"的命令控件，我们可以通过传入 ``eval_func=-1`` 来做到这一点。默认情况下则会使用调用者命名空间。
+而这可能造成一些意料之外的结果，比如，如果有人有一个叫 ``C`` 的变量在用户命名空间中，或者在传入 ``patsy``
+的数据结构中包含它，则 ``C`` 会被在公式里被当成一个分类变量。见 `Patsy 
+API Reference <http://patsy.readthedocs.org/en/latest/API-reference.html>`_ 了解更多
 
-Using formulas with models that do not (yet) support them
+
+
+在未支持的模型中使用公式
 ---------------------------------------------------------
 
-Even if a given ``statsmodels`` function does not support formulas, you
-can still use ``patsy``'s formula language to produce design matrices.
-Those matrices can then be fed to the fitting function as ``endog`` and
-``exog`` arguments.
-
-To generate ``numpy`` arrays:
+甚至一个``statsmodels``函数不支持公式时，你也可以使用 ``patsy`` 公式语言
+形成设计矩阵。这些矩阵之后可以分成 ``endog`` , ``exog`` 参数传到拟合函数中去。
 
 .. code:: python
 
@@ -314,7 +260,8 @@ To generate ``numpy`` arrays:
     4          1        69      83             5727
 
 
-To generate pandas data frames:
+
+若要获取pandas DataFrame:
 
 .. code:: python
 
