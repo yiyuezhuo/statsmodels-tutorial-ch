@@ -13,7 +13,18 @@ docs:
 
 -  `Patsy formula language description <http://patsy.readthedocs.org/>`_
 
-Loading modules and functions
+使用R风格模式拟合模型
+=====================================
+
+在0.5.0版本之后, ``statsmodels`` 让用户可以使用R风格的公式拟合模型。在内部，
+``statsmodels`` 使用 `patsy <http://patsy.readthedocs.org/>`_ 包来转换公式
+与数据为模型拟合所用的矩阵。这个公式框架是非常有力的，这个教程只介绍最简单
+的部分。一个对公式语言的全面介绍可以参见 ``patsy`` 的文档：
+
+-  `Patsy formula language description <http://patsy.readthedocs.org/>`_
+
+
+Loading modules and functions 
 -----------------------------
 
 .. code:: python
@@ -36,12 +47,30 @@ a `pandas <http://pandas.pydata.org/>`_ data frame.
 Formula-compatible models have the following generic call signature:
 ``(formula, data, subset=None, *args, **kwargs)``
 
+注意我们导入的是 ``statsmodels.formula.api`` 而不是通常的 ``statsmodels.api``
+``formula.api`` 放了很多类似 ``api`` 里的函数（如OLS,GLM），但是它还放了对等的其小写
+版本。通常来说，小写的模型接收 ``formula`` 与 ``df`` 参数，而大写版本则接收``endog``
+与``exog`` 设计矩阵。 ``formula`` 接收一个字符串以 ``patsy`` 公式项描述的模型。
+``df`` 则持一个 `pandas <http://pandas.pydata.org/>`_ DataFrame 对象。`
+
+``dir(smf)`` 会打印出一个可用模型的列表。
+
+适用公式的模型有以下通用的参数调用格式:
+
+``(formula, data, subset=None, *args, **kwargs)``
+
 OLS regression using formulas
 -----------------------------
 
 To begin, we fit the linear model described on the `Getting
 Started <gettingstarted.html>`_ page. Download the data, subset columns,
 and list-wise delete to remove missing observations:
+
+使用公式进行OLS回归
+-----------------------------
+
+为了入门，我们拟合一个在 `Getting Started <gettingstarted.html>`_ 页面
+描述过的线性模型。下载数据，选择列并且智能删除带缺失的观测值：
 
 .. code:: python
 
@@ -59,6 +88,8 @@ and list-wise delete to remove missing observations:
     4       79        69      83      E
 
 Fit the model:
+
+拟合模型：
 
 .. code:: python
 
@@ -108,6 +139,16 @@ If *Region* had been an integer variable that we wanted to treat
 explicitly as categorical, we could have done so by using the ``C()``
 operator:
 
+分类变量
+---------------------
+
+观察上面的打印出来的汇总结果，注意到 ``patsy`` 发现了 *Region* 元素是文本字符串，
+所以它将 *Region* 当成了分类变量。因为 ``patsy`` 默认设定是包含了截距的，所以我们
+自动抛弃了 *Region* 分类变量中的一个值。
+
+如果 *Region* 已经是一个整数变量了而我们想让其被当成是一个分类变量，我们可以做到这一点
+通过使用 ``C()`` 操作符：
+
 .. code:: python
 
     res = smf.ols(formula='Lottery ~ Literacy + Wealth + C(Region)', data=df).fit()
@@ -128,6 +169,9 @@ Examples more advanced features ``patsy``'s categorical variables
 function can be found here: `Patsy: Contrast Coding Systems for
 categorical variables <contrasts.html>`_
 
+``patsy`` 的分类变量的更高级的使用例子可以在这里找到 `Patsy: Contrast Coding Systems for
+categorical variables <contrasts.html>`_
+
 Operators
 ---------
 
@@ -135,11 +179,21 @@ We have already seen that "~" separates the left-hand side of the model
 from the right-hand side, and that "+" adds new columns to the design
 matrix.
 
+操作符
+---------
+
+我们已经看到 "~" 分割了模型的左边与右边，以及 "+" 增加了新的列到设计矩阵中。
+
 Removing variables
 ~~~~~~~~~~~~~~~~~~
 
 The "-" sign can be used to remove columns/variables. For instance, we
 can remove the intercept from a model by:
+
+移除变量
+~~~~~~~~~~~~~~~~~~
+
+"-" 符号可以用于移除列/变量。作为例子，我们可以从模型中移除截距，通过：
 
 .. code:: python
 
@@ -159,6 +213,10 @@ can remove the intercept from a model by:
 
 Multiplicative interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Multiplicative interactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 ":" adds a new column to the design matrix with the product of the other
 two columns. "\*" will also include the individual columns that were
