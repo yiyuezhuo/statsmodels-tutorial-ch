@@ -4,14 +4,15 @@
 
 ### 已完成
 
-* ``index.rst`` 首页
-* ``gettingstarted.rst`` 最小例子
-* ``regression.rst`` 回归模型对象
-* ``example_formulas.rst`` 使用R风格公式表示模型
-* ``endog_exog.rst`` endog,exog(因变量，自变量)来源
-* ``about.rst`` statsmodels模块历史
+* [index.rst](docs/source/index.rst) 首页
+* [gettingstarted.rst](docs/source/gettingstarted.rst) 最小例子
+* [regression.rst](docs/source/regression.rst) 回归模型对象
+* [example_formulas.rst](docs/source/example_formulas.rst) 使用R风格公式表示模型
+* [diagnostic.rst](docs/source/diagnostic.rst) 模型诊断
+* [endog_exog.rst](docs/source/endog_exog.rst) endog,exog(因变量，自变量)来源
+* [about.rst](docs/source/about.rst) statsmodels模块历史
 
-#statsmodels 注释
+# statsmodels 注释
 
 ## summary()
 

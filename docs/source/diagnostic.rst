@@ -2,188 +2,193 @@
 
 .. _diagnostics:
 
-Regression Diagnostics and Specification Tests
+
+回归诊断与设定检验
 ==============================================
 
 
-Introduction
+
+介绍
 ------------
 
-In many cases of statistical analysis, we are not sure whether our statistical
-model is correctly specified. For example when using ols, then linearity and
-homoscedasticity are assumed, some test statistics additionally assume that
-the errors are normally distributed or that we have a large sample.
-Since our results depend on these statistical assumptions, the results are
-only correct of our assumptions hold (at least approximately).
 
-One solution to the problem of uncertainty about the correct specification is
-to use robust methods, for example robust regression or robust covariance
-(sandwich) estimators. The second approach is to test whether our sample is
-consistent with these assumptions.
+在很多类型的统计分析中，我们不确定是否我们的统计模型被正确设定了。如当我们使用
+ols时，我们假设了线性与同方差的成立，有时一些检验还进一步假设了分布是正态分布的，
+或者样本是大样本。由于我们的分析结果依赖于这些统计假设，所以只有这些假设成立
+（或者至少近似成立）的情况下我们的结果才是成立。
 
-The following briefly summarizes specification and diagnostics tests for
-linear regression.
 
-Heteroscedasticity Tests
+如果并不确信设定的正确性，一个解决方法是使用稳健方法，比如稳健回归或稳健协方差
+（sandwich）估计量。第二种方法是检验是否我们的样本与这些假设相一致。
+
+
+下面的内容简略的概括了线性回归的设定与诊断检验。
+
+
+异方差检验
 ------------------------
 
-For these test the null hypothesis is that all observations have the same
-error variance, i.e. errors are homoscedastic. The tests differ in which kind
-of heteroscedasticity is considered as alternative hypothesis. They also vary
-in the power of the test for different types of heteroscedasticity.
 
+它们是一些原假设是所有观测具有相同的误差方差（或者说误差是同方差的）的检验。
+这些检验区别在哪种异方差模式被放在备择假设上。它们在不同的异方差模式上的检验
+功效也是有区别的。
+
+	
 :py:func:`het_breushpagan <statsmodels.stats.diagnostic.het_breushpagan>`
-    Lagrange Multiplier Heteroscedasticity Test by Breush-Pagan
+    Breush-Pagan的拉格朗日乘子异方差检验
 
 :py:func:`het_white <statsmodels.stats.diagnostic.het_white>`
-    Lagrange Multiplier Heteroscedasticity Test by White
+	White的拉格朗日乘子异方差检验
 
 :py:func:`het_goldfeldquandt <statsmodels.stats.diagnostic.het_goldfeldquandt>`
-    test whether variance is the same in 2 subsamples
+	检验是否方差在两个子样本中是相同的
 
 
-Autocorrelation Tests
+
+
+自相关检验
 ---------------------
 
-This group of test whether the regression residuals are not autocorrelated.
-They assume that observations are ordered by time.
 
+这些检验用于检验是否回归残差有自相关性。
+它们假设观测值是按时间排序的。
+
+  
 :py:func:`durbin_watson <statsmodels.stats.diagnostic.durbin_watson>`
-  - Durbin-Watson test for no autocorrelation of residuals
-  - printed with summary()
+  - Durbin-Watson 检验，检验残差是否自相关
+  - 该结果会被 summary() 显示出来
 
 :py:func:`acorr_ljungbox <statsmodels.stats.diagnostic.acorr_ljungbox>`
-  - Ljung-Box test for no autocorrelation of residuals
-  - also returns Box-Pierce statistic
+  - Ljung-Box 检验，检验残差是否自相关
+  - 同时返回 Box-Pierce 统计量
 
 :py:func:`acorr_breush_godfrey <statsmodels.stats.diagnostic.acorr_breush_godfrey>`
-  - Breush-Pagan test for no autocorrelation of residuals
+  - Breush-Pagan 检验，检验残差是否自相关
 
 
-missing
-  - ?
 
 
-Non-Linearity Tests
+
+非线性检验
 -------------------
 
+	
 :py:func:`linear_harvey_collier <statsmodels.stats.diagnostic.linear_harvey_collier>`
-  - Multiplier test for Null hypothesis that linear specification is
-    correct
+  - 乘子检验，其原假设为线性设定是正确的。
 
 :py:func:`acorr_linear_rainbow <statsmodels.stats.diagnostic.acorr_linear_rainbow>`
-  - Multiplier test for Null hypothesis that linear specification is
-    correct.
+  - 乘子检验，其原假设为线性设定是正确的。
 
 :py:func:`acorr_linear_lm <statsmodels.stats.diagnostic.acorr_linear_lm>`
-  - Lagrange Multiplier test for Null hypothesis that linear specification is
-    correct. This tests against specific functional alternatives.
+  - 拉格朗日乘子检验，其原假设是线性设定是正确的。这个检验的备择假设的函数形式需要指定。
 
 
-Tests for Structural Change, Parameter Stability
+
+
+检验结构性变化，参数稳定性
 ------------------------------------------------
 
-Test whether all or some regression coefficient are constant over the
-entire data sample.
 
-Known Change Point
+检验回归系数在整个样本序列一直是不变的。
+
+	
+已知系数可能变化位置情况
 ^^^^^^^^^^^^^^^^^^
 
 OneWayLS :
-  - flexible ols wrapper for testing identical regression coefficients across
-    predefined subsamples (eg. groups)
+  - 用来简化检验分组回归的回归系数是否相等的检验的ols简单封装。
 
-missing
-  - predictive test: Greene, number of observations in subsample is smaller than
-    number of regressors
+缺失
+  - predictive test: Greene, 分组中的观测数少于解释变量。
 
 
-Unknown Change Point
+
+  
+不知道系数可能变化位置情况
 ^^^^^^^^^^^^^^^^^^^^
 
 :py:func:`breaks_cusumolsresid <statsmodels.stats.diagnostic.breaks_cusumolsresid>`
-  - cusum test for parameter stability based on ols residuals
+  - cusum 检验，基于ols残差的来判定参数稳定性。（在突变的那一刻残差累积值会突然变大）
 
 :py:func:`breaks_hansen <statsmodels.stats.diagnostic.breaks_hansen>`
-  - test for model stability, breaks in parameters for ols, Hansen 1992
+  - ols模型稳定性检验, 基于参数化的分段, Hansen 1992 
+  
 
 :py:func:`recursive_olsresiduals <statsmodels.stats.diagnostic.recursive_olsresiduals>`
-  Calculate recursive ols with residuals and cusum test statistic. This is
-  currently mainly helper function for recursive residual based tests.
-  However, since it uses recursive updating and doesn't estimate separate
-  problems it should be also quite efficient as expanding OLS function.
-
-missing
-  - supLM, expLM, aveLM  (Andrews, Andrews/Ploberger)
-  - R-structchange also has musum (moving cumulative sum tests)
-  - test on recursive parameter estimates, which are there?
+  计算递归的ols(每次进入前几个数据)的残差和累积值统计量。这是一个服务于基于递归
+  残差的检验的辅助函数。由于它使用递归更新规则计算每步的值，所以它比反复重新估计
+  模型的方法效率高。
 
 
-Mutlicollinearity Tests
+
+
+多重共线性检验
 --------------------------------
 
-conditionnum (statsmodels.stattools)
-  - -- needs test vs Stata --
+  
+条件数 (statsmodels.stattools)
+  - -- 需要与 Stata 结果比较 --
   - cf Grene (3rd ed.) pp 57-8
-
+  
 numpy.linalg.cond
-  - (for more general condition numbers, but no behind the scenes help for
-    design preparation)
+  - 用于计算更一般的条件数,
 
-Variance Inflation Factors
+方差膨胀因子
   This is currently together with influence and outlier measures
   (with some links to other tests here: http://www.stata.com/help.cgi?vif)
+  现在它被和离群点测度与影响放在一起 (一些相关检验可参考：http://www.stata.com/help.cgi?vif )
 
 
-Normality and Distribution Tests
+
+
+
+正态性检验与分布拟合检验
 --------------------------------
 
+  
 :py:func:`jarque_bera <statsmodels.stats.tools.jarque_bera>`
-  - printed with summary()
-  - test for normal distribution of residuals
+  - 会在summary()中被汇报
+  - 检验残差是否符合正态分布
 
-Normality tests in scipy stats
-  need to find list again
+在scipy.stats中的正态性检验
+  需要重新编写
 
 :py:func:`omni_normtest <statsmodels.stats.tools.omni_normtest>`
-  - test for normal distribution of residuals
-  - printed with summary()
-
+  - 检验残差是否符合正态分布
+  - 会在summary()中被汇报。
+  
 :py:func:`normal_ad <statsmodels.stats.diagnostic.normal_ad>`
-  - Anderson Darling test for normality with estimated mean and variance
+  - Anderson Darling正态性检验，使用估计而非给定的均值和方差。
 
 :py:func:`kstest_normal <statsmodels.stats.diagnostic.kstest_normal>` :py:func:`lillifors <statsmodels.stats.diagnostic.lillifors>`
-  Lillifors test for normality, this is a Kolmogorov-Smirnov tes with for
-  normality with estimated mean and variance. lillifors is an alias for
-  kstest_normal
+  Lillifors 正态性检验，这是一种使用 Kolmogorov-Smirnov统计量并使用估计的均值与方差进行的检验。
+  lillifors是kstest_normal的别名。
 
 qqplot, scipy.stats.probplot
 
-other goodness-of-fit tests for distributions in scipy.stats and enhancements
+scipy.stats中的其他的分布拟合优度检验与强化版
   - kolmogorov-smirnov
   - anderson : Anderson-Darling
   - likelihood-ratio, ...
-  - chisquare tests, powerdiscrepancy : needs wrapping (for binning)
+  - chisquare tests, powerdiscrepancy : 需要分组的封装
 
 
-Outlier and Influence Diagnostic Measures
+
+
+离群点与影响诊断测度
 -----------------------------------------
-
-These measures try to identify observations that are outliers, with large
-residual, or observations that have a large influence on the regression
-estimates. Robust Regression, RLM, can be used to both estimate in an outlier
-robust way as well as identify outlier. The advantage of RLM that the
-estimation results are not strongly influenced even if there are many
-outliers, while most of the other measures are better in identifying
-individual outliers and might not be able to identify groups of outliers.
+这些测度方式试图识别出那些是离群点的观测，它们有着大残差或对回归估计产生着
+巨大的影响。稳健回归，RLM，既可以用于进行削弱离群点影响的稳健的回归，也可以
+用来识别离群点。RLM的优势在于它的估计结果在有很多离群点时也不受很大影响，
+与之对比，虽然有很多其他方法在识别个别离群点上更为有效，
+但它们却不能识别成组的离群点。
 
 :py:class:`RLM <statsmodels.robust.robust_linear_model.RLM>`
-    example from example_rlm.py ::
+    example_rlm.py 中的例子 ::
 
         import statsmodels.api as sm
 
-        ### Example for using Huber's T norm with the default
-        ### median absolute deviation scaling
+		### 使用 Huber's T norm 与默认的绝对偏差中位数度量的例子
 
         data = sm.datasets.stackloss.load()
         data.exog = sm.add_constant(data.exog)
@@ -191,16 +196,14 @@ individual outliers and might not be able to identify groups of outliers.
         hub_results = huber_t.fit()
         print hub_results.weights
 
-    And the weights give an idea of how much a particular observation is
-    down-weighted according to the scaling asked for.
+	这个权重一个关于特定的观测是如何被所要求的尺度所加权的的度量。
 
+   
 :py:class:`Influence <statsmodels.stats.outliers_influence.OLSInfluence>`
-   Class in stats.outliers_influence, most standard measures for outliers
-   and influence are available as methods or attributes given a fitted
-   OLS model. This is mainly written for OLS, some but not all measures
-   are also valid for other models.
-   Some of these statistics can be calculated from an OLS results instance,
-   others require that an OLS is estimated for each left out variable.
+   stats.outliers_influence中的类，当接收一个拟合出的OLS模型时给出对于离群点
+   的标准测度与影响度量。它主要是面向OLS编写的，其中有些而不是全部也可以用于
+   其他模型。
+   这些统计量中的一部分可以从OLS结果对象中被计算，有些需要原始数据进行辅助回归。
 
    - resid_press
    - resid_studentized_external
@@ -218,10 +221,11 @@ individual outliers and might not be able to identify groups of outliers.
 
 
 
-Unit Root Tests
+
+单位根检验
 ---------------
 
 :py:func:`unitroot_adf <statsmodels.stats.diagnostic.unitroot_adf>`
-  - same as adfuller but with different signature
+  - 与adfuller等价，只是另一个名字而已。
 
 

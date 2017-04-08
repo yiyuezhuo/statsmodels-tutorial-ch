@@ -32,8 +32,6 @@
 财务支持
 -----------------
 
-We are grateful for the financial support that we obtained for the
-development of statsmodels:
 
 我们感激资助我们进行statsmodels开发的财务支持:
 
